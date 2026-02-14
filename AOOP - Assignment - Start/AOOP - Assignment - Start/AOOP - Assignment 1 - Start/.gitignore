@@ -1,0 +1,11 @@
+# Compiled class files
+bin/
+*.class
+
+# Eclipse project files
+.settings/
+
+# Temporary files
+*.tmp
+*.bak
+*~
