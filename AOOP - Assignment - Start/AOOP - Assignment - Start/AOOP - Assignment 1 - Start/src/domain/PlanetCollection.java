@@ -60,6 +60,8 @@ public class PlanetCollection implements Iterable<List<Body>> {
 	
 	/**
 	 * Removes a star from the collection.
+	 * Note: This does not affect any sister star relationships that may exist
+	 * in the StarCollection. Coordinate removals between collections if needed.
 	 * 
 	 * @param star The star to remove
 	 * @return true if the star was removed, false otherwise

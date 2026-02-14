@@ -106,11 +106,11 @@ public class Planet extends Body {
 		}
 		
 		// Calculate distance factor so planets span from min to max
-		// Distance doubles for each subsequent planet
-		// Formula: minDistance * (2^n) = maxDistance
-		// where n is the number of doublings
-		double distanceFactor = 1.0;
+		// Using exponential spacing (similar to doubling) to distribute planets
+		// across the valid range while ensuring the last planet is near maxDistance
+		double distanceFactor = 2.0;
 		if (numberOfPlanets > 1) {
+			// Calculate the factor needed to reach maxDistance in numberOfPlanets-1 steps
 			distanceFactor = Math.pow(maxDistance / minDistance, 1.0 / (numberOfPlanets - 1));
 		}
 		

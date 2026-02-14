@@ -91,22 +91,23 @@ public class StarCollection {
 			Star existingStar = (Star) existingBody;
 			double distance = newStar.calculateDistance(existingStar);
 			
-			// Reject if within 0.01 parsecs
+			// Reject if within 0.01 parsecs (too close to any star)
 			if (distance < 0.01) {
 				return false;
 			}
 			
-			// Reject if within 0.3 parsecs of a double star
+			// Reject if within 0.3 parsecs of a double star (more restrictive for binaries)
 			if (distance < 0.3 && existingStar.getSister() != null) {
 				return false;
 			}
 			
-			// Reject if between 0.03 and 0.3 parsecs
-			if (distance >= 0.03 && distance < 0.3) {
+			// Reject if between 0.03 and 0.3 parsecs of a single star
+			if (distance >= 0.03 && distance < 0.3 && existingStar.getSister() == null) {
 				return false;
 			}
 			
-			// Check for potential sister star (within 0.1 parsecs)
+			// Check for potential sister star (within 0.1 parsecs and not already double)
+			// This can only happen if distance is between 0.01 and 0.03 parsecs
 			if (distance < 0.1 && existingStar.getSister() == null) {
 				nearbyStarCount++;
 				potentialSister = existingStar;
