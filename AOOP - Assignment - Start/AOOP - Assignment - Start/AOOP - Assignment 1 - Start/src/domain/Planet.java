@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import domain.types.PlanetType;
@@ -22,7 +24,8 @@ public class Planet extends Body {
 	}
 	
 	// This method needs some changing!
-	public static Planet random(Star star, int index, float distance, long seed) {
+	public static Planet random(Star star, int index, float distance) {
+		long seed = star.getDesignation().hashCode() + index + (long)(distance * 1000);
 		Random r = new Random(seed);
 		String designation = star.getDesignation() + " " + index;
 		float tilt = r.nextFloat() * 10f;
@@ -75,6 +78,51 @@ public class Planet extends Body {
 			}
 		}
 		return new Planet(designation, null, type, star, distance, tilt, excentricity);
+	}
+	
+	/**
+	 * Generates a list of planets for the given star.
+	 * The number of planets is determined by the star's type, with random variation.
+	 * Planet distances double for each subsequent planet starting from minDistance.
+	 * 
+	 * @param star The star to generate planets for
+	 * @return List of generated planets
+	 */
+	public static List<Planet> generatePlanets(Star star) {
+		List<Planet> planets = new ArrayList<>();
+		
+		// Get star type parameters
+		int basePlanets = star.getType().getNumberOfPlanets();
+		int variation = star.getType().getVariationOfPlanets();
+		double minDistance = star.getType().getMinDistanceOfPlanets();
+		double maxDistance = star.getType().getMaxDistanceOfPlanets();
+		
+		// Calculate number of planets with variation
+		Random r = new Random(star.getDesignation().hashCode());
+		int numberOfPlanets = basePlanets + (r.nextInt(variation * 2 + 1) - variation);
+		
+		if (numberOfPlanets <= 0) {
+			return planets;
+		}
+		
+		// Calculate distance factor so planets span from min to max
+		// Distance doubles for each subsequent planet
+		// Formula: minDistance * (2^n) = maxDistance
+		// where n is the number of doublings
+		double distanceFactor = 1.0;
+		if (numberOfPlanets > 1) {
+			distanceFactor = Math.pow(maxDistance / minDistance, 1.0 / (numberOfPlanets - 1));
+		}
+		
+		// Generate planets
+		float currentDistance = (float) minDistance;
+		for (int i = 1; i <= numberOfPlanets; i++) {
+			Planet planet = random(star, i, currentDistance);
+			planets.add(planet);
+			currentDistance *= distanceFactor;
+		}
+		
+		return planets;
 	}
 
 	public PlanetType getType() {
